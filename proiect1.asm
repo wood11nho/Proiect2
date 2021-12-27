@@ -54,9 +54,29 @@ etforvalidare:
 	
 	
 eticheta2:
+	movl aux, %eax
+	addl m, %eax
+	cmp %eax, n
+	jle valoaren
+	jmp incepere1
+valoaren:
+	movl n, %eax	
+
+incepere1:
+	movl (%edi, %edx, 4), %ebx
+etforvalidaree:
+	cmp %eax, aux
+	je eticheta3
+	movl (%edi, %eax, 4), %ecx
+	cmp %ecx, %ebx
+	je ok_devine_null
+	
+	subl $1, %eax
+	jmp etforvalidaree
+
+eticheta3:
 	movl $1, %ebx
 	
-	lea frecv, %esi
 etforvalidare2:
 	cmp %ebx, n1
 	jl finalizare
@@ -83,7 +103,6 @@ backk:
 	movl %esp, %ebp
 	
 	movl 8(%ebp), %edx
-	lea vector, %edi
 	movl (%edi, %edx, 4), %eax
 	cmp %eax, nul
 	je pct_nefix
@@ -101,7 +120,6 @@ pct_nefix:
 		ret
 		verificare:
 			movl %ecx, (%edi, %edx, 4)
-			lea frecv, %esi
 			addl $1, (%esi, %ecx, 4)
 			movl %edx, aux
 			pushl %ecx
@@ -148,7 +166,7 @@ pct_fix:
 	call valid
 	popl %ebx
 	popl %ebx
-	
+	movl ok, %eax
 et3:
 	cmp %eax, nul
 	je else1
@@ -164,10 +182,11 @@ else_back:
 	pushl %edx
 	call backk
 	popl %edx
+	popl %ebp
+	ret
 	
 else1:
 	subl $1, %edx
-
 main:
 
 	pushl $sir
@@ -205,6 +224,9 @@ main:
 	movl %eax, m
 
 	movl $1, %ecx
+	
+	lea frecv, %esi
+	lea vector, %edi
 etfor:
 	cmp %ecx, n
 	jl etout
@@ -220,8 +242,7 @@ etfor:
 	call atoi
 	popl %ebx
 	popl %ecx
-
-	movl $vector, %edi
+	
 	movl %eax, (%edi, %ecx, 4)	
 	
 	cmp %eax, nul
@@ -231,7 +252,6 @@ etfor:
 	
 et_elem_fix:
 
-	movl $frecv, %esi
 	addl $1, (%esi, %eax, 4)
 	incl %ecx
 	jmp etfor
@@ -242,7 +262,6 @@ etout:
 	popl %edx
 	
 tipar:
-	lea vector, %edi
 	movl $1, %ebx
 	etfor_afisare:
 	cmp %ebx, n
@@ -278,3 +297,5 @@ etexit:
 	movl $1, %eax
 	xorl %ebx, %ebx
 	int $0x80
+#3 1 1 0 0 0 0 3 0 2 3
+#    1 2 1 3 2 3 1 2 3
